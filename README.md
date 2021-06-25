@@ -82,8 +82,8 @@ services:
 
 ### SSH Tunnel settings
 
-The **root** password for SSH in `sickp/alpine-sshd` is "**root**".  
-You can also [change default root password](https://github.com/sickp/docker-alpine-sshd#change-root-password).
+The default **root** password for SSH is "**root**".  
+You can also change default root password by setting `ROOT_PASSWORD` environment variable.
 
 ### Database connection settings example
 
@@ -112,6 +112,7 @@ DB_TUNNEL_NETWORK_HOSTNAME_LABEL=db.network.tunnel.hostname
 DB_TUNNEL_CONTAINER_NAME=db-tunnel-sshd
 DB_TUNNEL_CONTAINER_PORT=22666
 DB_CONTAINER_NAME_PATTERN="mariadb|mysql" #pattern for docker ps filtering
+ROOT_PASSWORD=root
 ```
 
 ### MIT license
