@@ -11,12 +11,14 @@ DB_TUNNEL_NETWORK_HOSTNAME_LABEL=${DB_TUNNEL_NETWORK_HOSTNAME_LABEL:-'db.network
 DB_TUNNEL_CONTAINER_NAME=${DB_TUNNEL_CONTAINER_NAME:-'db-tunnel-sshd'}
 DB_TUNNEL_EXPOSED_PORT=${DB_TUNNEL_EXPOSED_PORT:-'22666'}
 DB_CONTAINER_NAME_PATTERN=${DB_CONTAINER_NAME_PATTERN:-'mariadb|mysql'}
+ROOT_PASSWORD=${ROOT_PASSWORD:-'root'}
 
 # return true/false or error if not exist
 IS_TUNNEL_CONTAINER_RUNNING=$(docker inspect -f "{{.State.Running}}" ${DB_TUNNEL_CONTAINER_NAME} 2> /dev/null)
 if [ "$IS_TUNNEL_CONTAINER_RUNNING" == "" ]; then
     echo "Running db tunnel container ${GREEN}${DB_TUNNEL_CONTAINER_NAME}${RESTORE} on port ${GREEN}${DB_TUNNEL_EXPOSED_PORT}${RESTORE}"
-    docker run -d -p ${DB_TUNNEL_EXPOSED_PORT}:22 --restart=always --name ${DB_TUNNEL_CONTAINER_NAME} sickp/alpine-sshd
+    docker build . -t docker-db-tunnel --build-arg ROOT_PASSWORD="${ROOT_PASSWORD}"
+    docker run -d -p ${DB_TUNNEL_EXPOSED_PORT}:22 --restart=always --name ${DB_TUNNEL_CONTAINER_NAME} docker-db-tunnel
 elif [ "$IS_TUNNEL_CONTAINER_RUNNING" == "false" ]; then
     echo "Starting existing db tunnel container with name: ${GREEN}${DB_TUNNEL_CONTAINER_NAME}${RESTORE}"
     docker start ${DB_TUNNEL_CONTAINER_NAME} 1> /dev/null
